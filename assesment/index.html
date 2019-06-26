@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+    <!-- ******* Author-Venkata Manjusha ******  -->
+    <title>Image Gallery</title>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="css/gallery.css">
+</head>
+
+<script>
+    function readTextFile(file, callback) {
+    var rawFile = new XMLHttpRequest();
+    rawFile.overrideMimeType("application/json");
+    rawFile.open("GET", file, true);
+    rawFile.onreadystatechange = function() {
+        if (rawFile.readyState === 4 && rawFile.status == "200") {
+            callback(rawFile.responseText);
+        }
+    }
+    rawFile.send(null);
+}
+
+  function getData() {
+    readTextFile("../data/photos.json", function(imageData){
+        var data = JSON.parse(imageData);
+        for (i = 0; data.length > i; i++) {
+            var img = new Image(200, 200);
+            img.src = data[i].urls.thumb;
+            img.id = "img" + i;
+            img.fullImage = data[i].urls.full;
+            // adding event listener.
+            img.addEventListener('click', function(event) {
+                showFullImage(event);
+            });
+            var src = document.getElementById("imageGallery");
+            src.appendChild(img);
+        }
+    });
+  }
+
+ function showFullImage(event) {
+    var modal = document.getElementById("myModal");
+    var img = document.getElementById("modalImg");
+    modal.style.display = "block";
+    img.src = event.target.fullImage;
+    var span = document.getElementsByClassName("close")[0];
+    span.onclick = function() { 
+        modal.style.display = "none";
+    }
+}
+    
+</script>
+
+<body onload="getData()">
+   <div class="container">
+       <!--image will be placed here-->
+       <div id="imageGallery"></div>
+       <!-- The Modal -->
+        <div id="myModal" class="modal">
+            <span class="close">&times;</span>
+            <img class="modal-content" id="modalImg">
+        </div>
+   </div>
+</body>
+
+</html>
